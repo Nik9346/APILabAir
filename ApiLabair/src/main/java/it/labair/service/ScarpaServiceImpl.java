@@ -5,12 +5,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import it.labair.dao.CategoriaDao;
 import it.labair.dao.ColoreDao;
 import it.labair.dao.ScarpaDao;
+import it.labair.dao.TagliaDao;
 import it.labair.dto.CategoriaDto;
 import it.labair.dto.ScarpaDto;
+import it.labair.model.Categoria;
+import it.labair.model.Colore;
 import it.labair.model.Scarpa;
 import it.labair.model.Taglia;
 
@@ -29,12 +35,20 @@ public class ScarpaServiceImpl implements ScarpaService {
 	ColoreDao coloreDao;
 	
 	@Autowired
+	TagliaDao tagliaDao;
+	
+	@Autowired
 	ModelMapper modelMapper;
+	
+	@Autowired
+	ColoreService coloreServiceImpl;
+	
+	@Autowired
+	TagliaService tagliaServiceImpl;
 	
 	@Override
 	public void registraScarpa(Scarpa scarpa) {
-		// TODO Auto-generated method stub
-
+		scarpaDao.save(scarpa);
 	}
 
 	@Override
@@ -53,20 +67,24 @@ public class ScarpaServiceImpl implements ScarpaService {
 	}
 
 	@Override
-	public Scarpa getScarpaById(int id) {
-		// TODO Auto-generated method stub
-		return null;
+	public ScarpaDto getScarpaById(int id) {
+		Scarpa scarpa = scarpaDao.findById(id).get();
+			ScarpaDto scarpaDto = modelMapper.map(scarpa, ScarpaDto.class);
+			scarpaDto.setCategoria(modelMapper.map(scarpa.getCategoria(), CategoriaDto.class).getDescrizione());
+			scarpaDto.setTaglie(scarpa.getTaglie().stream().map(Taglia::toString).collect(Collectors.toList()));
+			scarpaDto.setColori(scarpa.getColori().stream().map(t -> t.toString()).collect(Collectors.toList()));
+		return scarpaDto;
 	}
 
 	@Override
-	public Scarpa getScarpaByColore(String nomeColore) {
+	public ScarpaDto getScarpaByColore(String nomeColore) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void cancellaScarpa(int id) {
-		// TODO Auto-generated method stub
+		
 
 	}
 

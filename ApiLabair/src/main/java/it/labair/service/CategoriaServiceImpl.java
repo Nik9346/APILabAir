@@ -22,8 +22,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
 	@Override
 	public void registraCategoria(Categoria categoria) {
-		// TODO Auto-generated method stub
-
+		categoriaDao.save(categoria);
 	}
 
 	@Override

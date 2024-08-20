@@ -22,6 +22,17 @@ public class Colore {
 	@Column
 	private String colore;
 	
+	@Column
+	private String esadecimale;
+	
+	public String getEsadecimale() {
+		return esadecimale;
+	}
+
+	public void setEsadecimale(String esadecimale) {
+		this.esadecimale = esadecimale;
+	}
+
 	@ManyToMany(mappedBy = "colori")
 	private List<Scarpa> scarpe;
 
