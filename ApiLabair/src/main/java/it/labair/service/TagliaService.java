@@ -2,13 +2,15 @@ package it.labair.service;
 
 import java.util.List;
 
+
+import it.labair.helper.Risposta;
 import it.labair.model.Taglia;
 
 public interface TagliaService {
-	
-	String registraTaglia(Taglia taglia);
-	String registraTaglie(List<Taglia> taglie);
-	void cancellaTaglia(int id);
-	Integer getTagliaByNumero(int numeroTaglia);
+	Risposta registraTaglia(Taglia taglia);
+	Risposta registraTaglie(List<Taglia> taglie);
+	Object elencoTaglie();
+	Risposta cancellaTaglia(int id);
+	Object getTagliaByNumero(int numeroTaglia);
 
 }

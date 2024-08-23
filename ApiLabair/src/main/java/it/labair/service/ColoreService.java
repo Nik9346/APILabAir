@@ -1,16 +1,15 @@
 package it.labair.service;
 
 import java.util.List;
-
-import it.labair.dto.ColoreDto;
+import it.labair.helper.Risposta;
 import it.labair.model.Colore;
 
 public interface ColoreService {
 	
-	void registraColore(Colore colore);
-	List<ColoreDto> elencocolori();
-	String registraColori(List<Colore> colori);
-	void cancellaColore(int id);
-	String getColoreByNomeColore(String nomeColore); 
+	Risposta registraColore(Colore colore);
+	Object elencocolori();
+	Risposta registraColori(List<Colore> colori);
+	Risposta cancellaColore(int id);
+	Object getColoreByNomeColore(String nomeColore); 
 
 }

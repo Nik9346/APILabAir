@@ -6,7 +6,7 @@ import it.labair.model.Colore;
 
 public interface ColoreDao extends CrudRepository<Colore, Integer> {
 	
-	public String findByColore(String colore);
+	Colore findByColore(String colore);
 	
 
 }

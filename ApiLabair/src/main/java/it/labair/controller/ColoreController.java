@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import it.labair.dto.ColoreDto;
+import it.labair.helper.Risposta;
 import it.labair.model.Colore;
 import it.labair.service.ColoreService;
 import jakarta.validation.Valid;
@@ -24,12 +24,20 @@ public class ColoreController {
 	ColoreService coloreService;
 	
 	@GetMapping("/get")
-	public ResponseEntity<List<ColoreDto>> elencoColori(){
+	public ResponseEntity<Object> elencoColori(){
 		return ResponseEntity.status(HttpStatus.OK).body(coloreService.elencocolori());
 	}
 	
+	@GetMapping("/get/colore/{nomeColore}")
+	public ResponseEntity<Object> coloreByNomeColore(@PathVariable("nomeColore") String nomeColore){
+		return ResponseEntity.status(HttpStatus.OK).body(coloreService.getColoreByNomeColore(nomeColore));
+	}
+	
 	@PostMapping("/add")
-	public String coloriRegistrati(@Valid @RequestBody List<Colore> colori){
-		return coloreService.registraColori(colori);
-	}	
+	public ResponseEntity<Risposta> coloriRegistrati(@Valid @RequestBody List<Colore> colori){
+		Risposta risposta =  coloreService.registraColori(colori);
+		return ResponseEntity.status(risposta.getCodice()).body(risposta);
+	}
+	
+	
 }

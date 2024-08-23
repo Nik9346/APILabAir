@@ -3,12 +3,13 @@ package it.labair.service;
 import java.util.List;
 
 import it.labair.dto.CategoriaDto;
+import it.labair.helper.Risposta;
 import it.labair.model.Categoria;
 
 public interface CategoriaService {
- void registraCategoria(Categoria categoria);
- List<CategoriaDto> getCategorie();
- Categoria getCategoriaById(int id);
- Categoria getCategoriaByDescrizione(String descrizione);
- void cancellaCategoria(int id);
+ Risposta registraCategoria(Categoria categoria);
+ Object getCategorie();
+ Object getCategoriaById(int id);
+ Object getCategoriaByDescrizione(String descrizione);
+ Risposta cancellaCategoria(int id);
 }
