@@ -1,5 +1,9 @@
 package it.labair.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +20,11 @@ public class Profilo {
 	@Column
 	private String username;
 	@Column
+	@JsonProperty(access = Access.WRITE_ONLY) //imposta la proprietà come solo scrittura
 	private String password;
+	@Column
+	@JsonIgnore //ignora il token sia in fase di serializzazione che deserializzazione
+	private String token;
 	
 	//getter and Setter
 	public int getId() {
@@ -36,6 +44,12 @@ public class Profilo {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	

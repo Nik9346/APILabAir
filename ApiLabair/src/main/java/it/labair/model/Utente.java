@@ -29,7 +29,7 @@ public class Utente {
 	@JoinColumn(name = "pk_profilo",referencedColumnName = "id")
 	private Profilo profilo;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval = true)
+	@OneToMany(mappedBy = "utente")
 	private List<Ordine> ordini;
 
 	public int getId() {
