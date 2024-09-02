@@ -10,6 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -31,6 +33,29 @@ public class Utente {
 	
 	@OneToMany(mappedBy = "utente")
 	private List<Ordine> ordini;
+	
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name= "utenti_indirizzi",
+				joinColumns = @JoinColumn(name="p_utente",referencedColumnName = "id"),
+				inverseJoinColumns = @JoinColumn(name="p_indirizzo",referencedColumnName = "id")
+	)
+	private List<Indirizzo>indirizzi;
+
+	public List<Ordine> getOrdini() {
+		return ordini;
+	}
+
+	public void setOrdini(List<Ordine> ordini) {
+		this.ordini = ordini;
+	}
+
+	public List<Indirizzo> getIndirizzi() {
+		return indirizzi;
+	}
+
+	public void setIndirizzi(List<Indirizzo> indirizzi) {
+		this.indirizzi = indirizzi;
+	}
 
 	public int getId() {
 		return id;

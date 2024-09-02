@@ -1,8 +1,5 @@
 package it.labair.service;
 
-import java.util.List;
-
-import it.labair.dto.CategoriaDto;
 import it.labair.helper.Risposta;
 import it.labair.model.Categoria;
 

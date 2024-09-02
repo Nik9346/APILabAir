@@ -29,7 +29,7 @@ public class Ordine {
 	private double importo;
 	
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "pk_utente",referencedColumnName = "id")
+	@JoinColumn(name = "p_utente",referencedColumnName = "id")
 	private Utente utente;
 	
 	@OneToMany(

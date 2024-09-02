@@ -8,4 +8,5 @@ public interface UtenteDao extends CrudRepository<Utente, Integer> {
 
 	Utente findByProfiloUsername(String userName);
 	Utente findByProfiloUsernameAndProfiloPassword(String usernameString, String password);
+	Utente findByProfiloToken(String token);
 }

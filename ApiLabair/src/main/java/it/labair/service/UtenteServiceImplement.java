@@ -1,10 +1,13 @@
 package it.labair.service;
 
 import java.util.NoSuchElementException;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import it.labair.dao.UtenteDao;
+import it.labair.dto.UtenteDto;
 import it.labair.helper.GeneratoreToken;
 import it.labair.helper.Risposta;
 import it.labair.model.Utente;
@@ -21,6 +24,9 @@ public class UtenteServiceImplement implements UtenteService {
 	
 	@Autowired
 	GeneratoreToken generatoreToken;
+	
+	@Autowired
+	ModelMapper mapper;
 
 	@Override
 	public Risposta registraUtente(Utente utente) {
@@ -77,8 +83,10 @@ public class UtenteServiceImplement implements UtenteService {
 	public Object utenteById(int id) {
 		try {
 			Utente utente = utenteDao.findById(id).get();
-			if (utente != null)
-				return utente;
+			if (utente != null) {
+				UtenteDto utenteDto = mapper.map(utente, UtenteDto.class);
+				return utenteDto;
+			} 
 		} catch (Exception e) {
 			if (e instanceof NoSuchElementException)
 				return new Risposta(404, "utente non trovato");
@@ -92,8 +100,10 @@ public class UtenteServiceImplement implements UtenteService {
 		if(userName != null) {
 			try {
 				Utente utente = utenteDao.findByProfiloUsername(userName);
-				if(utente !=null)
-				return utente;
+				if(utente !=null) {
+					UtenteDto utenteDto = mapper.map(utente, UtenteDto.class);
+					return utenteDto;
+				}
 			return new Risposta(404, "Utente con Username: " + userName + " non trovato");
 			} catch (Exception e) {
 				return new Risposta(400, "Errore in fase di ricerca utente con UserName: " + userName + " non trovato");
@@ -115,8 +125,17 @@ public class UtenteServiceImplement implements UtenteService {
 
 	@Override
 	public Risposta logoutUtente(String token) {
-		// TODO Auto-generated method stub
-		return null;
+		Utente utente = utenteDao.findByProfiloToken(token);
+		if(utente !=null) {
+			try {
+				utente.getProfilo().setToken(null);
+				utenteDao.save(utente);
+				return new Risposta(200, "logout avvenuto con successo");
+			} catch (Exception e) {
+				return new Risposta(404, "Errore in fase di logout");
+			}
+		}
+		return new Risposta(401, "Non autorizzato, utente non trovato");
 	}
 
 }
