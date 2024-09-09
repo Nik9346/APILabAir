@@ -8,50 +8,44 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "scarpe_ordinate")
-public class ScarpaOrdinata {
+@Table(name="carrello_scarpe")
+public class ScarpaCarrello {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@Column
-	private int quantita;
-	
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "pk_scarpa", referencedColumnName = "id")
+	@JoinColumn(name = "p_scarpa",referencedColumnName = "id")
 	private Scarpa scarpa;
 	
-	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "pk_ordine", referencedColumnName = "id")
-	private Ordine ordine;
+	@ManyToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name = "p_carrello",referencedColumnName = "id")
+	private Carrello carrello;
 	
-	@ManyToOne(cascade = CascadeType.REFRESH)
+	@ManyToOne
 	@JoinColumn(name = "p_colore",referencedColumnName = "id")
 	private Colore colore;
 	
-	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "p_taglia",referencedColumnName = "id")
+	@ManyToOne
+	@JoinColumn(name="p_taglia",referencedColumnName = "id")
 	private Taglia taglia;
+	
+	@Column
+	private int quantita;
 
-	//Getter e Setter
+	
+	
 	public int getId() {
 		return id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public int getQuantita() {
-		return quantita;
-	}
-
-	public void setQuantita(int quantita) {
-		this.quantita = quantita;
 	}
 
 	public Scarpa getScarpa() {
@@ -62,13 +56,14 @@ public class ScarpaOrdinata {
 		this.scarpa = scarpa;
 	}
 
-	public Ordine getOrdine() {
-		return ordine;
+	public Carrello getCarrello() {
+		return carrello;
 	}
 
-	public void setOrdine(Ordine ordine) {
-		this.ordine = ordine;
+	public void setCarrello(Carrello carrello) {
+		this.carrello = carrello;
 	}
+
 	public Colore getColore() {
 		return colore;
 	}
@@ -84,6 +79,13 @@ public class ScarpaOrdinata {
 	public void setTaglia(Taglia taglia) {
 		this.taglia = taglia;
 	}
-	
+
+	public int getQuantita() {
+		return quantita;
+	}
+
+	public void setQuantita(int quantita) {
+		this.quantita = quantita;
+	}
 
 }

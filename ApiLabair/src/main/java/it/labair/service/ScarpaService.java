@@ -9,6 +9,7 @@ public interface ScarpaService {
 	Object getScarpaById(int id);
 	Object getScarpaByColore(String nomeColore);
 	Risposta cancellaScarpa(int id);
+	Object getScarpaByIdForCart(int id);
 	
 
 }

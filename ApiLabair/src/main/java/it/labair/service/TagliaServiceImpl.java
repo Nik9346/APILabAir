@@ -106,4 +106,17 @@ public class TagliaServiceImpl implements TagliaService {
 		}
 	}
 
+	@Override
+	public Object getTagliaById(Integer idTaglia) {
+		try {
+			Taglia taglia = tagliaDao.findById(idTaglia).get();
+//			TagliaDto tagliaDaPresentare = new TagliaDto();
+//			tagliaDaPresentare.setTaglia(taglia.getTaglia());
+//			tagliaDaPresentare.setId(taglia.getId());
+			return taglia;
+		} catch (Exception e) {
+			return new Risposta(400, "Errore in fase di richiesta taglia" + e.getMessage());
+		}
+	}
+
 }

@@ -1,15 +1,27 @@
 package it.labair.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
+import org.apache.catalina.mapper.Mapper;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import it.labair.dao.UtenteDao;
+import it.labair.dto.CarrelloDto;
+import it.labair.dto.IndirizzoDto;
+import it.labair.dto.ScarpaCarrelloDto;
 import it.labair.dto.UtenteDto;
 import it.labair.helper.GeneratoreToken;
 import it.labair.helper.Risposta;
+import it.labair.model.Carrello;
+import it.labair.model.ScarpaCarrello;
 import it.labair.model.Utente;
 import jakarta.servlet.http.HttpSession;
 
@@ -27,6 +39,7 @@ public class UtenteServiceImplement implements UtenteService {
 	
 	@Autowired
 	ModelMapper mapper;
+	
 
 	@Override
 	public Risposta registraUtente(Utente utente) {
@@ -81,6 +94,7 @@ public class UtenteServiceImplement implements UtenteService {
 
 	@Override
 	public Object utenteById(int id) {
+		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
 		try {
 			Utente utente = utenteDao.findById(id).get();
 			if (utente != null) {
@@ -90,8 +104,9 @@ public class UtenteServiceImplement implements UtenteService {
 		} catch (Exception e) {
 			if (e instanceof NoSuchElementException)
 				return new Risposta(404, "utente non trovato");
+			return new Risposta(400, "errore durante la ricerca dell'utente con id: " + id + e.getMessage());
 		}
-		return new Risposta(400, "errore durante la ricerca dell'utente con id: " + id);
+		return new Risposta(400, "errore in fase di richiesta");
 
 	}
 
@@ -136,6 +151,20 @@ public class UtenteServiceImplement implements UtenteService {
 			}
 		}
 		return new Risposta(401, "Non autorizzato, utente non trovato");
+	}
+
+	@Override
+	public Object getUtenteByToken(String token) {
+		if(token!= null) {
+			try {
+				Utente utente = utenteDao.findByProfiloToken(token);
+				if(utente != null)
+					return utente;
+			} catch (Exception e) {
+				return new Risposta(400, "errore in fase di controllo token" + e.getMessage());
+			}
+		}
+		return new Risposta(400, "non è presente nessun token in richiesta");
 	}
 
 }

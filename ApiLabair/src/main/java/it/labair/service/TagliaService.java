@@ -12,5 +12,5 @@ public interface TagliaService {
 	Object elencoTaglie();
 	Risposta cancellaTaglia(int id);
 	Object getTagliaByNumero(int numeroTaglia);
-
+	Object getTagliaById(Integer idTaglia);
 }

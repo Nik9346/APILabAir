@@ -2,6 +2,7 @@ package it.labair.dto;
 
 import java.util.List;
 
+import it.labair.model.Carrello;
 import it.labair.model.Ordine;
 import it.labair.model.Profilo;
 
@@ -13,6 +14,14 @@ public class UtenteDto {
 	private Profilo profilo;
 	private List<Ordine> ordini;
 	private List<IndirizzoDto>indirizzi;
+	private CarrelloDto carrello;
+	
+	public CarrelloDto getCarrello() {
+		return carrello;
+	}
+	public void setCarrello(CarrelloDto carrello) {
+		this.carrello = carrello;
+	}
 	public int getId() {
 		return id;
 	}
@@ -49,6 +58,7 @@ public class UtenteDto {
 	public void setIndirizzi(List<IndirizzoDto> indirizzi) {
 		this.indirizzi = indirizzi;
 	}
+	
 	
 	
 

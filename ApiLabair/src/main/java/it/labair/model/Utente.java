@@ -2,6 +2,8 @@ package it.labair.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,12 +36,26 @@ public class Utente {
 	@OneToMany(mappedBy = "utente")
 	private List<Ordine> ordini;
 	
+	
+	//forse cambiare in uno ad uno un utente può avere un indirizzo
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name= "utenti_indirizzi",
 				joinColumns = @JoinColumn(name="p_utente",referencedColumnName = "id"),
 				inverseJoinColumns = @JoinColumn(name="p_indirizzo",referencedColumnName = "id")
 	)
 	private List<Indirizzo>indirizzi;
+	
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "utente")
+	@JsonManagedReference
+	private Carrello carrello;
+
+	public Carrello getCarrello() {
+		return carrello;
+	}
+
+	public void setCarrello(Carrello carrello) {
+		this.carrello = carrello;
+	}
 
 	public List<Ordine> getOrdini() {
 		return ordini;

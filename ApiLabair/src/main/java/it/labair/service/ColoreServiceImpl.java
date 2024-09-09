@@ -111,4 +111,17 @@ public class ColoreServiceImpl implements ColoreService {
 		}
 
 	}
+
+	@Override
+	public Object getColoreById(Integer idColore) {
+		if(idColore!= null ) {
+			try {
+				Colore colore = coloreDao.findById(idColore).get();
+				return colore;
+			} catch (Exception e) {
+				return new Risposta(400, "Colore con id: "+ idColore + " non trovato " + e.getMessage());
+			}
+		}
+		return new Risposta(400, "non è presente nessun idColore in richiesta");
+	}
 }

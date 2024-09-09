@@ -1,17 +1,21 @@
 package it.labair.controller;
 
-import java.util.Map;
 
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.labair.dto.UtenteDto;
 import it.labair.helper.Risposta;
 import it.labair.model.Utente;
 import it.labair.service.UtenteService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,8 +55,15 @@ public class UtenteController {
 	}
 
 	@PutMapping("/login")
-	public ResponseEntity<Risposta> loginUtente(@RequestBody Map<String, String> corpoRichiesta) {
+	public ResponseEntity<Risposta> loginUtente(@RequestBody Map<String, String> corpoRichiesta, HttpServletResponse response) {
+		UtenteDto utente = (UtenteDto) utenteService.utenteByUsername(corpoRichiesta.get("username"));
 		Risposta risposta = utenteService.loginUtente(corpoRichiesta.get("username"), corpoRichiesta.get("password"));
+		String sessionId = utente.getProfilo().getToken(); 
+		Cookie cookie = new Cookie("JSESSIONID", sessionId);
+		cookie.setHttpOnly(true);
+		cookie.setPath("/");
+		cookie.setMaxAge(60*60);
+		response.addCookie(cookie);
 		return ResponseEntity.status(risposta.getCodice()).body(risposta);
 	}
 
@@ -66,8 +77,10 @@ public class UtenteController {
 	}
 
 	@DeleteMapping("/logout/{token}")
-	public ResponseEntity<Risposta> logoutUtente(@Valid @PathVariable("token") String token) {
+	public ResponseEntity<Risposta> logoutUtente(@Valid @PathVariable("token") String token, HttpSession session) {
 		Risposta risposta = utenteService.logoutUtente(token);
+		if(session != null)
+		session.invalidate();
 		return ResponseEntity.status(risposta.getCodice()).body(risposta);
 	}
 

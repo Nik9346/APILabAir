@@ -2,6 +2,7 @@ package it.labair.service;
 
 import it.labair.helper.Risposta;
 import it.labair.model.Utente;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 public interface UtenteService {
@@ -17,4 +18,6 @@ public interface UtenteService {
 
 	Risposta loginUtente(String userName, String password);
 	Risposta logoutUtente(String token);
+	
+	Object getUtenteByToken(String token);
 }

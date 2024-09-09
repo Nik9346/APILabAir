@@ -10,6 +10,7 @@ public interface ColoreService {
 	Object elencocolori();
 	Risposta registraColori(List<Colore> colori);
 	Risposta cancellaColore(int id);
-	Object getColoreByNomeColore(String nomeColore); 
+	Object getColoreByNomeColore(String nomeColore);
+	Object getColoreById(Integer idColore);
 
 }

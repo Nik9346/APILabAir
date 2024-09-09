@@ -132,4 +132,14 @@ public class ScarpaServiceImpl implements ScarpaService {
 			return new Risposta(400, "Errore in fase di cancellazione scarpa: " + e.getMessage());
 		}
 	}
+	
+	@Override
+	public Object getScarpaByIdForCart(int id) {
+		try {
+			Scarpa scarpa = scarpaDao.findById(id).get();
+			return scarpa;
+		} catch (Exception e) {
+			return new Risposta(400, "errore in fase di richiesta scarpa per Id" + e.getMessage());
+		}
+	}
 }
