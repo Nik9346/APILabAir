@@ -47,6 +47,9 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 
 	@Override
 	public Risposta aggiuntaScarpa(ScarpaCarrello scarpa, HttpServletRequest request) {
+		if(scarpa.getScarpa() == null) {
+			return new Risposta(400,"Scarpa non può essere null");
+		}
 
 		if (scarpa != null && request != null) {
 			Scarpa scarpaOg = (Scarpa) scarpaService.getScarpaByIdForCart(scarpa.getScarpa().getId());

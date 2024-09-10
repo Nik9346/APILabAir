@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/Cart")
+@RequestMapping("/CartItem")
 public class ScarpaCarrelloController {
 	
 	@Autowired
