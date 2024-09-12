@@ -3,8 +3,11 @@ package it.labair.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.hibernate.id.IntegralDataTypeHolder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import it.labair.dao.ScarpaCarrelloDao;
 import it.labair.dto.ScarpaCarrelloDto;
@@ -95,8 +98,8 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 				if(scarpaCarrello.isPresent()) {
 					ScarpaCarrello scarpaCarrelloOg = scarpaCarrello.get();
 					try {
-//						carrello.getCarrelloItem().remove(scarpaCarrello);
-						scarpaCarrelloDao.delete(scarpaCarrelloOg);						
+						carrello.getCarrelloItem().remove(scarpaCarrelloOg);
+						scarpaCarrelloDao.delete(scarpaCarrelloOg);				
 						return new Risposta(200, "scarpa rimossa dal carrello");
 					} catch (Exception e) {
 						return new Risposta(400, "errore in fase di rimozione scarpa dal carrello con id: " + scarpaCarrelloOg.getId());
@@ -190,6 +193,30 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public Object getScarpaCarrelloNotLogged(Integer idScarpa, Integer idColore, Integer idTaglia) {
+		if(idScarpa != null && idColore != null && idTaglia != null) {
+			Scarpa scarpa = (Scarpa) scarpaService.getScarpaByIdForCart(idScarpa);
+			Taglia taglia = (Taglia) tagliaService.getTagliaById(idTaglia);
+			Colore colore = (Colore) coloreService.getColoreById(idColore);
+			if(scarpa != null && colore  != null && taglia != null) {
+				try {
+					ScarpaCarrello scarpaCarrello = new ScarpaCarrello();
+					scarpaCarrello.setColore(colore);
+					scarpaCarrello.setTaglia(taglia);
+					scarpaCarrello.setScarpa(scarpa);
+					scarpaCarrello.setQuantita(1);
+					ScarpaCarrelloDto scarpaCarrelloDto = mapper.map(scarpaCarrello, ScarpaCarrelloDto.class);
+					return scarpaCarrelloDto;
+				} catch (Exception e) {
+					return new Risposta(400, "Errore in fase di compilazione oggetto scarpa" + e.getMessage());
+				}
+			}
+			return new Risposta(400, "Errore in fase di ricerca scarpa, taglia o colore");
+		}
+		return new Risposta(400, "parametri mancanti nella richiesta");
 	}
 
 }

@@ -2,22 +2,16 @@ package it.labair.controller;
 
 
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-
 import it.labair.helper.Risposta;
 import it.labair.model.ScarpaCarrello;
 import it.labair.service.ScarpaCarrelloService;
 import jakarta.servlet.http.HttpServletRequest;
-
 import jakarta.validation.Valid;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +32,11 @@ public class ScarpaCarrelloController {
 	@GetMapping("/listAll")
 	public ResponseEntity<Object> elencoScarpe(HttpServletRequest request){
 		return ResponseEntity.status(HttpStatus.OK).body(scarpaCarrelloService.getScarpe(request));
+	}
+	
+	@GetMapping("/getCart/{idScarpa}/{idTaglia}/{idColore}")
+	public ResponseEntity<Object>getScarpaCarrelloNotLogged(@PathVariable("idScarpa") Integer idScarpa, @PathVariable("idTaglia")Integer idTaglia,@PathVariable("idColore")Integer idColore){
+		return ResponseEntity.status(HttpStatus.OK).body(scarpaCarrelloService.getScarpaCarrelloNotLogged(idScarpa,idTaglia,idColore));
 	}
 	
 	@PostMapping("/add")
