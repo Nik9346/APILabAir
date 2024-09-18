@@ -1,5 +1,6 @@
 package it.labair.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -7,13 +8,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -38,14 +36,10 @@ public class Utente {
 	
 	
 	//forse cambiare in uno ad uno un utente può avere un indirizzo
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name= "utenti_indirizzi",
-				joinColumns = @JoinColumn(name="p_utente",referencedColumnName = "id"),
-				inverseJoinColumns = @JoinColumn(name="p_indirizzo",referencedColumnName = "id")
-	)
-	private List<Indirizzo>indirizzi;
+	@OneToMany(mappedBy = "utente", cascade = CascadeType.PERSIST)
+	private List<Indirizzo>indirizzi = new ArrayList<>(); 
 	
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "utente")
+	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "utente")
 	@JsonManagedReference
 	private Carrello carrello;
 

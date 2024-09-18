@@ -25,14 +25,15 @@ public class Carrello {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@OneToOne(cascade = CascadeType.REFRESH)
+	@OneToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name="p_utente",referencedColumnName = "id")
 	@JsonBackReference
 	private Utente utente;
 	
 	
-	@OneToMany(mappedBy = "carrello",cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+	@OneToMany(mappedBy = "carrello",cascade = CascadeType.ALL,orphanRemoval = true)
 	private List<ScarpaCarrello> carrelloItem = new ArrayList<>();
+	
 	public List<ScarpaCarrello> getCarrelloItem() {
 		return carrelloItem;
 	}
@@ -65,12 +66,11 @@ public class Carrello {
 		this.utente = utente;
 	}
 
-	public double getImporto() {
+	public Double getImporto() {
 		return importo;
 	}
-
-	public void setImporto(double importo) {
-		this.importo = importo;
-	}
+	
+	
+	
 	
 }

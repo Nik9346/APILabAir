@@ -1,14 +1,14 @@
 package it.labair.model;
 
-import java.util.List;
-
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -37,8 +37,20 @@ public class Indirizzo {
 	@Column
 	private String paese;
 
-	@ManyToMany(mappedBy = "indirizzi")
-	private List<Utente> utenti;
+	@ManyToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name="p_utente", referencedColumnName = "id")
+	private Utente utente;
+	
+	@OneToOne(mappedBy = "indirizzo", cascade = CascadeType.REFRESH)
+	Ordine ordine;
+
+	public Ordine getOrdine() {
+		return ordine;
+	}
+
+	public void setOrdine(Ordine ordine) {
+		this.ordine = ordine;
+	}
 
 	public int getId() {
 		return id;
@@ -97,13 +109,14 @@ public class Indirizzo {
 		this.paese = paese;
 	}
 
-	public List<Utente> getUtenti() {
-		return utenti;
+	public Utente getUtente() {
+		return utente;
 	}
 
-	public void setUtenti(List<Utente> utenti) {
-		this.utenti = utenti;
+	public void setUtente(Utente utente) {
+		this.utente = utente;
 	}
+
 	
 	
 }

@@ -1,27 +1,19 @@
 package it.labair.service;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
-import org.apache.catalina.mapper.Mapper;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import it.labair.dao.UtenteDao;
-import it.labair.dto.CarrelloDto;
-import it.labair.dto.IndirizzoDto;
-import it.labair.dto.ScarpaCarrelloDto;
 import it.labair.dto.UtenteDto;
 import it.labair.helper.GeneratoreToken;
 import it.labair.helper.Risposta;
 import it.labair.model.Carrello;
-import it.labair.model.ScarpaCarrello;
+import it.labair.model.Indirizzo;
 import it.labair.model.Utente;
 import jakarta.servlet.http.HttpSession;
 
@@ -48,10 +40,21 @@ public class UtenteServiceImplement implements UtenteService {
 			if (controlloUsername(utenteControlloEsistenzaUsername)) {
 				try {
 					utente.getProfilo().setPassword(encoder.encode(utente.getProfilo().getPassword()));
+					Carrello carrello = new Carrello();
+					carrello.setUtente(utente);
+					utente.setCarrello(carrello);
+					//Funzione commentata in quanto si occupa di tutto hibernate
+//					carrelloService.createCarrello(utente, carrello);
+					List<Indirizzo> indirizzi = utente.getIndirizzi();
+					for (Indirizzo i: indirizzi) {
+						i.setUtente(utente);
+					}
+					utente.setIndirizzi(indirizzi);
 					utenteDao.save(utente);
+					
 					return new Risposta(200, "Utente registrato correttamente");
 				} catch (Exception e) {
-					return new Risposta(400, "errore durante la registrazione dell'utente" + e.getMessage());
+					return new Risposta(400, "errore durante la registrazione dell'utente " + e.getMessage());
 				}
 			} else {
 				return new Risposta(409, "Username già in uso");

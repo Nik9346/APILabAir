@@ -7,8 +7,9 @@ import it.labair.model.Utente;
 public interface CarrelloService {
 	
 	Object getCarrello(Integer idUtente);
-	Risposta createCarrello(Utente utente);
+	Object createCarrello(Utente utente, Carrello carrello);
 	Risposta deleteCarrello(Carrello carrello);
 	Risposta updateCarrello(Carrello carrello);
-	
+	Risposta clearCart(Carrello carrello);
+	Double calcoloImporto(Carrello carrello);
 }

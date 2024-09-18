@@ -25,7 +25,7 @@ public class ScarpaOrdinata {
 	@JoinColumn(name = "pk_scarpa", referencedColumnName = "id")
 	private Scarpa scarpa;
 	
-	@ManyToOne(cascade = CascadeType.REFRESH)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "pk_ordine", referencedColumnName = "id")
 	private Ordine ordine;
 	

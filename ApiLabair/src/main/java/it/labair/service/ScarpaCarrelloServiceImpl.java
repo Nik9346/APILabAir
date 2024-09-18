@@ -72,7 +72,9 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 							scarpaCarrello.setQuantita(scarpa.getQuantita());
 							scarpaCarrello.setTaglia(taglia);
 							scarpaCarrello.setCarrello(carrello);
+							carrello.getCarrelloItem().add(scarpaCarrello);
 							scarpaCarrelloDao.save(scarpaCarrello);
+							carrelloService.updateCarrello(carrello);
 							return new Risposta(200, "scarpa registrata nel carrello");
 						} catch (Exception e) {
 							return new Risposta(400,"Errore durante l'aggiunta del prodotto al carrello" + e.getMessage());
@@ -99,6 +101,7 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 					ScarpaCarrello scarpaCarrelloOg = scarpaCarrello.get();
 					try {
 						carrello.getCarrelloItem().remove(scarpaCarrelloOg);
+						carrelloService.updateCarrello(carrello);
 						scarpaCarrelloDao.delete(scarpaCarrelloOg);				
 						return new Risposta(200, "scarpa rimossa dal carrello");
 					} catch (Exception e) {
@@ -118,6 +121,7 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 			String token = controlloCookie.getSessionId(request);
 			if(token != null) {
 				Utente utente = (Utente) utenteService.getUtenteByToken(token);
+				Carrello carrello = (Carrello) carrelloService.getCarrello(utente.getId());
 				if(utente != null) {
 					Optional<ScarpaCarrello> scarpaCarrelloOpt = scarpaCarrelloDao.findById(scarpaCarrello.getId());
 					if(!scarpaCarrelloOpt.isPresent()) {
@@ -141,6 +145,7 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 						scarpaCart.setQuantita(scarpaCarrello.getQuantita());
 					}
 					scarpaCarrelloDao.save(scarpaCart);
+					carrelloService.updateCarrello(carrello);
 					return new Risposta(200, "Scarpa nel carrello aggiornata con successo");
 				}
 				return new Risposta(400, "Non autorizzato, utente non trovato");
@@ -217,6 +222,11 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 			return new Risposta(400, "Errore in fase di ricerca scarpa, taglia o colore");
 		}
 		return new Risposta(400, "parametri mancanti nella richiesta");
+	}
+
+	@Override
+	public void rimozioneScarpaCarrello(ScarpaCarrello scarpaCarrello) {
+		scarpaCarrelloDao.delete(scarpaCarrello);
 	}
 
 }

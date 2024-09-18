@@ -1,6 +1,7 @@
 package it.labair.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -36,7 +38,19 @@ public class Ordine {
 			mappedBy = "ordine",
 			cascade = CascadeType.ALL,
 			orphanRemoval = true)
-	private List<ScarpaOrdinata> scarpeOrdinate;
+	private List<ScarpaOrdinata> scarpeOrdinate = new ArrayList<>();
+	
+	@OneToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = "p_indirizzo", referencedColumnName = "id")
+	Indirizzo indirizzo;
+
+	public Indirizzo getIndirizzo() {
+		return indirizzo;
+	}
+
+	public void setIndirizzo(Indirizzo indirizzo) {
+		this.indirizzo = indirizzo;
+	}
 
 	public int getId() {
 		return id;

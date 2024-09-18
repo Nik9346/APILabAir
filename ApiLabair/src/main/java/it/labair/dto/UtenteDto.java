@@ -12,7 +12,7 @@ public class UtenteDto {
 	private String nome;
 	private String cognome;
 	private Profilo profilo;
-	private List<Ordine> ordini;
+	private List<OrdineDto> ordini;
 	private List<IndirizzoDto>indirizzi;
 	private CarrelloDto carrello;
 	
@@ -46,18 +46,21 @@ public class UtenteDto {
 	public void setProfilo(Profilo profilo) {
 		this.profilo = profilo;
 	}
-	public List<Ordine> getOrdini() {
-		return ordini;
-	}
-	public void setOrdini(List<Ordine> ordini) {
-		this.ordini = ordini;
-	}
+	
 	public List<IndirizzoDto> getIndirizzi() {
 		return indirizzi;
 	}
 	public void setIndirizzi(List<IndirizzoDto> indirizzi) {
 		this.indirizzi = indirizzi;
 	}
+	public List<OrdineDto> getOrdini() {
+		return ordini;
+	}
+	public void setOrdini(List<OrdineDto> ordini) {
+		this.ordini = ordini;
+	}
+	
+	
 	
 	
 	
