@@ -1,19 +1,17 @@
 package it.labair.service;
 
-
-import java.util.List;
 import java.util.Optional;
-
-import org.modelmapper.internal.bytebuddy.asm.Advice.Return;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import it.labair.dao.CarrelloDao;
+import it.labair.dto.CarrelloDto;
+import it.labair.helper.ControlloCookie;
 import it.labair.helper.Risposta;
 import it.labair.model.Carrello;
 import it.labair.model.ScarpaCarrello;
 import it.labair.model.Utente;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class CarrelloServiceImpl implements CarrelloService {
@@ -21,17 +19,34 @@ public class CarrelloServiceImpl implements CarrelloService {
 	@Autowired
 	CarrelloDao carrelloDao;
 	
+	@Autowired
+	ModelMapper mapper;
+	
+	@Autowired
+	UtenteService utenteService;
+	
+	@Autowired
+	ControlloCookie controlloCookie;
+	
 	@Override
-	public Object getCarrello(Integer idUtente) {
-		if (idUtente != null) {
-			try {
-				Carrello carrello = carrelloDao.findByUtenteId(idUtente);
-				return carrello != null ? carrello : null;
-			} catch (Exception e) {
-				return new Risposta(400, "errore in fase di richiesta del carrello" + e.getMessage());
+	public Object getCarrello(Integer idUtente, HttpServletRequest request) {
+		if(idUtente != null && request != null) {
+			String token = controlloCookie.getSessionId(request);
+			if(token != null) {
+				Utente utente = (Utente) utenteService.getUtenteByToken(token);
+				if(utente != null && utente.getId() == idUtente) {					
+					try {
+						Carrello carrello = carrelloDao.findByUtenteId(idUtente);
+						return carrello != null ? carrello : null;
+					} catch (Exception e) {
+						return new Risposta(400, "errore in fase di richiesta del carrello" + e.getMessage());
+					}
+				}
+				return new Risposta(400, "Errore in fase di controllo utente"); 
 			}
+			return new Risposta(400, "Non autorizzato, Token non valido");
 		}
-		return new Risposta(400, "non è presente nessun idUtente in richiesta");
+		return new Risposta(400, "Errore in fase di richiesta, idUtente o token non validi");
 	}
 
 	@Override
@@ -107,6 +122,27 @@ public class CarrelloServiceImpl implements CarrelloService {
 			}
 		}
 		return new Risposta(400, "Errore, carrello non trovato");
+	}
+	
+	public Object getCarrelloForVerify(Integer idUtente, HttpServletRequest request) {
+		if(idUtente != null && request != null) {
+			String token = controlloCookie.getSessionId(request);
+			if(token != null) {
+				Utente utente = (Utente) utenteService.getUtenteByToken(token);
+				if(utente != null && utente.getId() == idUtente) {					
+					try {
+						Carrello carrello = carrelloDao.findByUtenteId(idUtente);
+						CarrelloDto carrelloDto = mapper.map(carrello, CarrelloDto.class);
+						return carrelloDto != null ? carrelloDto : null;
+					} catch (Exception e) {
+						return new Risposta(400, "errore in fase di richiesta del carrello" + e.getMessage());
+					}
+				}
+				return new Risposta(400, "Errore in fase di controllo utente"); 
+			}
+			return new Risposta(400, "Non autorizzato, Token non valido");
+		}
+		return new Risposta(400, "Errore in fase di richiesta, idUtente o token non validi");
 	}
 
 }

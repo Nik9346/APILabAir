@@ -1,9 +1,6 @@
 package it.labair.dto;
 
 import java.util.List;
-
-import it.labair.model.Carrello;
-import it.labair.model.Ordine;
 import it.labair.model.Profilo;
 
 public class UtenteDto {
@@ -15,7 +12,14 @@ public class UtenteDto {
 	private List<OrdineDto> ordini;
 	private List<IndirizzoDto>indirizzi;
 	private CarrelloDto carrello;
+	private PagamentoDto pagamento;
 	
+	public PagamentoDto getPagamento() {
+		return pagamento;
+	}
+	public void setPagamento(PagamentoDto pagamento) {
+		this.pagamento = pagamento;
+	}
 	public CarrelloDto getCarrello() {
 		return carrello;
 	}

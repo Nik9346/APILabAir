@@ -3,11 +3,8 @@ package it.labair.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.hibernate.id.IntegralDataTypeHolder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 import it.labair.dao.ScarpaCarrelloDao;
 import it.labair.dto.ScarpaCarrelloDto;
@@ -50,8 +47,8 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 
 	@Override
 	public Risposta aggiuntaScarpa(ScarpaCarrello scarpa, HttpServletRequest request) {
-		if(scarpa.getScarpa() == null) {
-			return new Risposta(400,"Scarpa non può essere null");
+		if (scarpa.getScarpa() == null) {
+			return new Risposta(400, "Scarpa non può essere null");
 		}
 
 		if (scarpa != null && request != null) {
@@ -77,7 +74,8 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 							carrelloService.updateCarrello(carrello);
 							return new Risposta(200, "scarpa registrata nel carrello");
 						} catch (Exception e) {
-							return new Risposta(400,"Errore durante l'aggiunta del prodotto al carrello" + e.getMessage());
+							return new Risposta(400,
+									"Errore durante l'aggiunta del prodotto al carrello" + e.getMessage());
 						}
 					}
 					return new Risposta(400, "Non autorizzato, utente non trovato");
@@ -95,17 +93,19 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 		if (token != null) {
 			Utente utente = (Utente) utenteService.getUtenteByToken(token);
 			if (utente != null) {
-				Carrello carrello = (Carrello) carrelloService.getCarrello(utente.getId());
+				Carrello carrello = (Carrello) carrelloService.getCarrello(utente.getId(), request);
 				Optional<ScarpaCarrello> scarpaCarrello = scarpaCarrelloDao.findById(idScarpa);
-				if(scarpaCarrello.isPresent()) {
+				if (scarpaCarrello.isPresent()) {
 					ScarpaCarrello scarpaCarrelloOg = scarpaCarrello.get();
 					try {
 						carrello.getCarrelloItem().remove(scarpaCarrelloOg);
-						carrelloService.updateCarrello(carrello);
-						scarpaCarrelloDao.delete(scarpaCarrelloOg);				
+						carrello.setImporto(carrello.getImporto() - (scarpaCarrelloOg.getScarpa().getPrezzo()*scarpaCarrelloOg.getQuantita()));
+						carrelloService.clearCart(carrello);
+						scarpaCarrelloDao.delete(scarpaCarrelloOg);
 						return new Risposta(200, "scarpa rimossa dal carrello");
 					} catch (Exception e) {
-						return new Risposta(400, "errore in fase di rimozione scarpa dal carrello con id: " + scarpaCarrelloOg.getId());
+						return new Risposta(400,
+								"errore in fase di rimozione scarpa dal carrello con id: " + scarpaCarrelloOg.getId());
 					}
 				}
 				return new Risposta(400, "Errore in fase di ricerca scarpa nel carrello");
@@ -117,36 +117,43 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 
 	@Override
 	public Risposta modificaScarpa(ScarpaCarrello scarpaCarrello, HttpServletRequest request) {
-		if(request != null) {
+		if (request != null) {
 			String token = controlloCookie.getSessionId(request);
-			if(token != null) {
+			if (token != null) {
 				Utente utente = (Utente) utenteService.getUtenteByToken(token);
-				Carrello carrello = (Carrello) carrelloService.getCarrello(utente.getId());
-				if(utente != null) {
+				if (utente != null) {
+					
+					Carrello carrello = (Carrello) carrelloService.getCarrello(utente.getId(), request);
 					Optional<ScarpaCarrello> scarpaCarrelloOpt = scarpaCarrelloDao.findById(scarpaCarrello.getId());
-					if(!scarpaCarrelloOpt.isPresent()) {
+					
+					if (!scarpaCarrelloOpt.isPresent()) {
 						return new Risposta(400, "scarpa non trovata nel carrello");
 					}
-					ScarpaCarrello scarpaCart = scarpaCarrelloOpt.get();
 					
-					if(scarpaCarrello.getTaglia() != null) {
+					ScarpaCarrello scarpaCart = scarpaCarrelloOpt.get();
+
+					if (scarpaCarrello.getTaglia() != null) {
 						List<Taglia> taglieDisponibili = scarpaCart.getScarpa().getTaglie();
 						Taglia nuovaTaglia = (Taglia) tagliaService.getTagliaById(scarpaCarrello.getTaglia().getId());
-						if(taglieDisponibili.contains(nuovaTaglia))
-						scarpaCart.setTaglia(nuovaTaglia);
+						if (taglieDisponibili.contains(nuovaTaglia))
+							scarpaCart.setTaglia(nuovaTaglia);
 					}
-					if(scarpaCarrello.getColore() != null) {
+					if (scarpaCarrello.getColore() != null) {
 						List<Colore> coloriDisponibili = scarpaCart.getScarpa().getColori();
 						Colore nuovoColore = (Colore) coloreService.getColoreById(scarpaCarrello.getColore().getId());
-						if(coloriDisponibili.contains(nuovoColore))
+						if (coloriDisponibili.contains(nuovoColore))
 							scarpaCart.setColore(nuovoColore);
 					}
-					if(scarpaCarrello.getQuantita() != scarpaCart.getQuantita() && scarpaCart.getQuantita() > 0) {
+					if (scarpaCarrello.getQuantita() != scarpaCart.getQuantita() && scarpaCart.getQuantita() > 0) {
 						scarpaCart.setQuantita(scarpaCarrello.getQuantita());
 					}
-					scarpaCarrelloDao.save(scarpaCart);
-					carrelloService.updateCarrello(carrello);
-					return new Risposta(200, "Scarpa nel carrello aggiornata con successo");
+					try {
+						scarpaCarrelloDao.save(scarpaCart);
+						carrelloService.updateCarrello(carrello);
+						return new Risposta(200, "Scarpa nel carrello aggiornata con successo");
+					} catch (Exception e) {
+						return new Risposta(400, "Errore in fase di modifica scarpa nel carrello " + e.getMessage());
+					}
 				}
 				return new Risposta(400, "Non autorizzato, utente non trovato");
 			}
@@ -157,15 +164,16 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 
 	@Override
 	public Object getScarpe(HttpServletRequest request) {
-		if(request != null) {
+		if (request != null) {
 			String token = controlloCookie.getSessionId(request);
-			if(token != null) {
+			if (token != null) {
 				Utente utente = (Utente) utenteService.getUtenteByToken(token);
-				if(utente != null) {
+				if (utente != null) {
 					List<ScarpaCarrello> scarpeCarrello = utente.getCarrello().getCarrelloItem();
-					if(scarpeCarrello != null) {
+					if (scarpeCarrello != null) {
 						try {
-							List<ScarpaCarrelloDto> scarpeCarrelloDto = scarpeCarrello.stream().map(i->mapper.map(i, ScarpaCarrelloDto.class)).collect(Collectors.toList());
+							List<ScarpaCarrelloDto> scarpeCarrelloDto = scarpeCarrello.stream()
+									.map(i -> mapper.map(i, ScarpaCarrelloDto.class)).collect(Collectors.toList());
 							return scarpeCarrelloDto;
 						} catch (Exception e) {
 							new Risposta(400, "Errore in fase di mappatura scarpe nel carrello" + e.getMessage());
@@ -183,7 +191,6 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 		return scarpeDaPresentare;
 	}
 
-	
 	private boolean controlloColore(Colore colore, Scarpa scarpa) {
 		for (Colore c : scarpa.getColori()) {
 			if (c.equals(colore))
@@ -202,11 +209,11 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 
 	@Override
 	public Object getScarpaCarrelloNotLogged(Integer idScarpa, Integer idColore, Integer idTaglia) {
-		if(idScarpa != null && idColore != null && idTaglia != null) {
+		if (idScarpa != null && idColore != null && idTaglia != null) {
 			Scarpa scarpa = (Scarpa) scarpaService.getScarpaByIdForCart(idScarpa);
 			Taglia taglia = (Taglia) tagliaService.getTagliaById(idTaglia);
 			Colore colore = (Colore) coloreService.getColoreById(idColore);
-			if(scarpa != null && colore  != null && taglia != null) {
+			if (scarpa != null && colore != null && taglia != null) {
 				try {
 					ScarpaCarrello scarpaCarrello = new ScarpaCarrello();
 					scarpaCarrello.setColore(colore);
@@ -222,11 +229,6 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 			return new Risposta(400, "Errore in fase di ricerca scarpa, taglia o colore");
 		}
 		return new Risposta(400, "parametri mancanti nella richiesta");
-	}
-
-	@Override
-	public void rimozioneScarpaCarrello(ScarpaCarrello scarpaCarrello) {
-		scarpaCarrelloDao.delete(scarpaCarrello);
 	}
 
 }

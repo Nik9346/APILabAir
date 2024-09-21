@@ -9,7 +9,8 @@ public class OrdineDto {
 	private LocalDate data;
 	private double importo;
 	private List<ScarpaOrdinataDto> scarpeOrdinate;
-	IndirizzoDto indirizzo;
+	private IndirizzoDto indirizzo;
+	private PagamentoDto pagamento;
 	
 	public int getId() {
 		return id;
@@ -40,5 +41,11 @@ public class OrdineDto {
 	}
 	public void setIndirizzo(IndirizzoDto indirizzo) {
 		this.indirizzo = indirizzo;
+	}
+	public PagamentoDto getPagamento() {
+		return pagamento;
+	}
+	public void setPagamento(PagamentoDto pagamento) {
+		this.pagamento = pagamento;
 	}
 }

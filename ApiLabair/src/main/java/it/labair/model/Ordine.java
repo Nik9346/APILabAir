@@ -28,6 +28,9 @@ public class Ordine {
 	private LocalDate data;
 	
 	@Column
+	private double speseSpedizione;
+	
+	@Column
 	private double importo;
 	
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -42,10 +45,22 @@ public class Ordine {
 	
 	@OneToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "p_indirizzo", referencedColumnName = "id")
-	Indirizzo indirizzo;
+	private Indirizzo indirizzo;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "p_pagamento", referencedColumnName = "id")
+	private Pagamento pagamento;
 
 	public Indirizzo getIndirizzo() {
 		return indirizzo;
+	}
+
+	public Pagamento getPagamento() {
+		return pagamento;
+	}
+
+	public void setPagamento(Pagamento pagamento) {
+		this.pagamento = pagamento;
 	}
 
 	public void setIndirizzo(Indirizzo indirizzo) {
@@ -72,8 +87,8 @@ public class Ordine {
 		return importo;
 	}
 
-	public void setImporto(double importo) {
-		this.importo = importo;
+	public void setImporto(double importo, double speseSpedizione) {
+		this.importo = importo + speseSpedizione;
 	}
 
 	public Utente getUtente() {
@@ -90,6 +105,14 @@ public class Ordine {
 
 	public void setScarpeOrdinate(List<ScarpaOrdinata> scarpeOrdinate) {
 		this.scarpeOrdinate = scarpeOrdinate;
+	}
+
+	public double getSpeseSpedizione() {
+		return speseSpedizione;
+	}
+
+	public void setSpeseSpedizione(double speseSpedizione) {
+		this.speseSpedizione = speseSpedizione;
 	}
 	
 	

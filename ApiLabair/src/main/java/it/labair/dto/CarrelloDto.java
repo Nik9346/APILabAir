@@ -3,8 +3,6 @@ package it.labair.dto;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 
 
 
@@ -14,6 +12,15 @@ public class CarrelloDto {
 	private int id;
 //	@JsonManagedReference
 	private List<ScarpaCarrelloDto> carrelloItem;
+	public double getImporto() {
+		return importo;
+	}
+
+	public void setImporto(double importo) {
+		this.importo = importo;
+	}
+
+	private double importo;
 
 	
 	public int getId() {

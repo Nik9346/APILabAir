@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,6 +23,9 @@ public class Carrello {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
+	@Column
+	private Double importo;
 	
 	@OneToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name="p_utente",referencedColumnName = "id")
@@ -45,10 +47,6 @@ public class Carrello {
 	public void setImporto(Double importo) {
 		this.importo = importo;
 	}
-
-	@Column
-	private Double importo;
-	
 
 	public int getId() {
 		return id;

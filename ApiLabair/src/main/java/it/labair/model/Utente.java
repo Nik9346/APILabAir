@@ -42,6 +42,19 @@ public class Utente {
 	@OneToOne(cascade = CascadeType.PERSIST, mappedBy = "utente")
 	@JsonManagedReference
 	private Carrello carrello;
+	
+	@OneToMany(mappedBy = "utente", cascade = CascadeType.ALL)
+	private List<Pagamento> pagamenti = new ArrayList<>();
+	
+	
+
+	public List<Pagamento> getPagamenti() {
+		return pagamenti;
+	}
+
+	public void setPagamenti(List<Pagamento> pagamenti) {
+		this.pagamenti = pagamenti;
+	}
 
 	public Carrello getCarrello() {
 		return carrello;

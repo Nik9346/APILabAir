@@ -11,6 +11,4 @@ public interface ScarpaCarrelloService {
 	Risposta rimozioneScarpa(int idScarpa,HttpServletRequest request);
 	Risposta modificaScarpa(ScarpaCarrello scarpaCarrello, HttpServletRequest request);
 	Object getScarpe(HttpServletRequest request);
-	void rimozioneScarpaCarrello(ScarpaCarrello scarpaCarrello);
-
 }

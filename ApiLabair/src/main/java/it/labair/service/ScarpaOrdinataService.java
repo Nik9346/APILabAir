@@ -1,9 +1,9 @@
 package it.labair.service;
 
 import it.labair.helper.Risposta;
-import it.labair.model.Carrello;
 import it.labair.model.Ordine;
+import it.labair.model.ScarpaCarrello;
 
 public interface ScarpaOrdinataService {
-	Risposta aggiuntaScarpaOrdinata(Ordine ordine, Carrello carrello);
+	Risposta aggiuntaScarpaOrdinata(ScarpaCarrello scarpaCarrello, Ordine ordine);
 }
