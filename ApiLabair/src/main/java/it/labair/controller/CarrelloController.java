@@ -20,6 +20,7 @@ public class CarrelloController {
 	@Autowired
 	CarrelloService carrelloService;
 	
+	//Mappiamo l'endpoint per ricevere il carrello relativo all'utente
 	@GetMapping("/get/{idUtente}")
 	public ResponseEntity<Object>getCarrello(@PathVariable("idUtente") Integer idUtente, HttpServletRequest request) {
 	 Object risposta = carrelloService.getCarrello(idUtente,request);
@@ -27,7 +28,7 @@ public class CarrelloController {
 		 return ResponseEntity.status(((Risposta)risposta).getCodice()).body((Risposta) risposta);
 	 return ResponseEntity.status(HttpStatus.OK).body(risposta);
 }
-	
+	//endpoint per la verifica del carrello utente in fase di ordine
 	@GetMapping("/getCartVerify/{idUtente}")
 	public ResponseEntity<Object>getCarrelloForVerify(@PathVariable("idUtente") Integer idUtente, HttpServletRequest request) {
 	 Object risposta = carrelloService.getCarrelloForVerify(idUtente,request);

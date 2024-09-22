@@ -1,14 +1,17 @@
 package it.labair.controller;
 
 
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.labair.dto.UtenteDto;
+import it.labair.helper.PasswordValidationException;
 import it.labair.helper.Risposta;
 import it.labair.model.Utente;
 import it.labair.service.UtenteService;
@@ -33,6 +36,7 @@ public class UtenteController {
 	@Autowired
 	private UtenteService utenteService;
 
+	//endpoint utilizzto per ottenere l'utente passando come pathvariable l'idUtente
 	@GetMapping("/{utenteId}")
 	public ResponseEntity<Object> utenteById(@PathVariable("utenteId") Integer id) {
 		Object oggettoRisposta = utenteService.utenteById(id);
@@ -44,6 +48,7 @@ public class UtenteController {
 		}
 	}
 
+	//endpoint utilizzato per ottenere l'utente passando come pathvariable
 	@GetMapping("/username/{usernameUtente}")
 	public ResponseEntity<Object> utenteByUsername(@PathVariable("usernameUtente") String username) {
 		Object oggettoRisposta = utenteService.utenteByUsername(username);
@@ -54,6 +59,7 @@ public class UtenteController {
 		return ResponseEntity.status(HttpStatus.OK).body(utenteService.utenteByUsername(username));
 	}
 
+	//endpoint utilizzato per effettuare il login 
 	@PutMapping("/login")
 	public ResponseEntity<Risposta> loginUtente(@RequestBody Map<String, String> corpoRichiesta, HttpServletResponse response) {
 		UtenteDto utente = (UtenteDto) utenteService.utenteByUsername(corpoRichiesta.get("username"));
@@ -67,15 +73,18 @@ public class UtenteController {
 		return ResponseEntity.status(risposta.getCodice()).body(risposta);
 	}
 
+	//enpoint utilizzato per la registrazione dell'utente
 	@PostMapping("/registrazioneUtente")
 	public ResponseEntity<Risposta> registrazioneUtente(@Valid @RequestBody Utente utente) {
-		if (utente.getProfilo().getPassword()
-				.matches("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,50}"))
+		if (!utente.getProfilo().getPassword()
+				.matches("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,50}")) 
+			throw new PasswordValidationException()
 			;
 		Risposta risposta = utenteService.registraUtente(utente);
 		return ResponseEntity.status(risposta.getCodice()).body(risposta);
 	}
-
+	
+	//endpoint utilizzato per il logout utente
 	@DeleteMapping("/logout/{token}")
 	public ResponseEntity<Risposta> logoutUtente(@Valid @PathVariable("token") String token, HttpSession session) {
 		Risposta risposta = utenteService.logoutUtente(token);
@@ -84,9 +93,26 @@ public class UtenteController {
 		return ResponseEntity.status(risposta.getCodice()).body(risposta);
 	}
 
+	
+	
+	//Gestione degli errori 
+	
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<String> entityNotFound(EntityNotFoundException ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
+	
+	@ExceptionHandler(BindException.class)
+	public ResponseEntity<Map<String, String>> gestioneEccezioneValidazione(BindException e){
+		Map<String, String> errori = new HashMap<>();
+		e.getBindingResult().getFieldErrors().forEach(err->errori.put(err.getField(), err.getDefaultMessage()));
+		return ResponseEntity.badRequest().body(errori);
+	}
+	@ExceptionHandler(PasswordValidationException.class)
+	public ResponseEntity<Risposta> gestioneEccezioneValidazionePassword(PasswordValidationException e){
+		Risposta risposta = new Risposta(400, e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(risposta);
+	}
+	
 
 }

@@ -6,10 +6,12 @@ import it.labair.model.Scarpa;
 public interface ScarpaService {
 	Risposta registraScarpa(Scarpa scarpa);
 	Object elencoScarpe();
-	Object getScarpaById(int id);
+	Object getScarpaById(Integer id);
 	Object getScarpaByColore(String nomeColore);
-	Risposta cancellaScarpa(int id);
-	Object getScarpaByIdForCart(int id);
+	Object getScarpeByNuovoArrivo(boolean nuovoArrivo);
+	Object getScarpeByCategoria(String categoria);
+	Risposta cancellaScarpa(Integer id);
+	Object getScarpaByIdForCart(Integer id);
 	
 
 }

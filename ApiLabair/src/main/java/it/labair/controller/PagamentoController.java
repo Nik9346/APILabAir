@@ -21,6 +21,7 @@ public class PagamentoController {
 	@Autowired
 	PagamentoService pagamentoService;
 	
+	//enpoint utilizzato per effettuare un pagamento e inserirlo nel db
 	@PostMapping("/payOrder")
 	public ResponseEntity<Risposta> payOrder(@RequestBody Pagamento pagamento, HttpServletRequest request) {
 		Risposta risposta = pagamentoService.addPagamento(pagamento, request);

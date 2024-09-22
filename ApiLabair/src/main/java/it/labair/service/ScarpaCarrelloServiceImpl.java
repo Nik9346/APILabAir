@@ -88,7 +88,7 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 	}
 
 	@Override
-	public Risposta rimozioneScarpa(int idScarpa, HttpServletRequest request) {
+	public Risposta rimozioneScarpa(Integer idScarpa, HttpServletRequest request) {
 		String token = controlloCookie.getSessionId(request);
 		if (token != null) {
 			Utente utente = (Utente) utenteService.getUtenteByToken(token);
@@ -100,7 +100,7 @@ public class ScarpaCarrelloServiceImpl implements ScarpaCarrelloService {
 					try {
 						carrello.getCarrelloItem().remove(scarpaCarrelloOg);
 						carrello.setImporto(carrello.getImporto() - (scarpaCarrelloOg.getScarpa().getPrezzo()*scarpaCarrelloOg.getQuantita()));
-						carrelloService.clearCart(carrello);
+//						carrelloService.clearCart(carrello);
 						scarpaCarrelloDao.delete(scarpaCarrelloOg);
 						return new Risposta(200, "scarpa rimossa dal carrello");
 					} catch (Exception e) {

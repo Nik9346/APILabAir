@@ -26,23 +26,25 @@ public class TagliaController {
 	
 	Risposta risposta = new Risposta(0, null);
 	
-	
+	//endpoint utilizzato per ottenere l'intero elenco delle taglie
 	@GetMapping("/get")
 	public ResponseEntity<Object> elencoTaglie(){
 		return ResponseEntity.status(HttpStatus.OK).body(tagliaService.elencoTaglie());
 	}
 	
+	//endpoint utilizzato per ottenere la taglia passando come pathvariable il numero
 	@GetMapping("/get/{numberSize}")
 	public ResponseEntity<Object>TagliaByNumero(@PathVariable("numberSize") Integer numberSize){
 		return ResponseEntity.status(HttpStatus.OK).body(tagliaService.getTagliaByNumero(numberSize));
 	}
 	
+	//endpoint utilizzato per registrare una nuova taglia nel db
 	@PostMapping("/addSize")
 	public ResponseEntity<Risposta> registraTaglia(@Valid @RequestBody Taglia taglia){
 		risposta = tagliaService.registraTaglia(taglia);
 		return ResponseEntity.status(risposta.getCodice()).body(risposta);
 	}
-	
+	//endpoint utilizzato per la registrazione di più taglie passando nel body un array con varie taglie
 	@PostMapping("/addSizes")
 	public ResponseEntity<Risposta> registaTaglie(@Valid @RequestBody List<Taglia> taglie){
 		risposta = tagliaService.registraTaglie(taglie);

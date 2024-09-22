@@ -23,16 +23,19 @@ public class ColoreController {
 	@Autowired
 	ColoreService coloreService;
 	
+	//endpoint utilizzato per ottenere l'elenco di tutti i colori presenti nel db
 	@GetMapping("/get")
 	public ResponseEntity<Object> elencoColori(){
 		return ResponseEntity.status(HttpStatus.OK).body(coloreService.elencocolori());
 	}
 	
+	//endpoint utilizzato per ottenere il colore passando il nome del colore
 	@GetMapping("/get/colore/{nomeColore}")
 	public ResponseEntity<Object> coloreByNomeColore(@PathVariable("nomeColore") String nomeColore){
 		return ResponseEntity.status(HttpStatus.OK).body(coloreService.getColoreByNomeColore(nomeColore));
 	}
 	
+	//endpoint utilizzato per aggiungere più colori
 	@PostMapping("/add")
 	public ResponseEntity<Risposta> coloriRegistrati(@Valid @RequestBody List<Colore> colori){
 		Risposta risposta =  coloreService.registraColori(colori);

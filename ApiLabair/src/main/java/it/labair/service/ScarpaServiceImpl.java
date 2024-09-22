@@ -12,6 +12,7 @@ import it.labair.dao.TagliaDao;
 import it.labair.dto.CategoriaDto;
 import it.labair.dto.ScarpaDto;
 import it.labair.helper.Risposta;
+import it.labair.model.Categoria;
 import it.labair.model.Colore;
 import it.labair.model.Scarpa;
 import it.labair.model.Taglia;
@@ -40,24 +41,25 @@ public class ScarpaServiceImpl implements ScarpaService {
 	@Override
 	public Risposta registraScarpa(Scarpa scarpa) {
 
-		if (scarpa == null) {
-			return new Risposta(400, "non è stata inserito nessun oggetto scarpa nella richiesta");
-		}
-		try {
-			Scarpa controlloEsistenza = scarpaDao.findById(scarpa.getId()).get();
-			if (controlloEsistenza == null) {
-				try {
-					scarpaDao.save(scarpa);
-					return new Risposta(200, "scarpa registrata correttamente");
-				} catch (Exception e) {
-					return new Risposta(400, "Errore nella registrazione della scarpa: " + e.getMessage());
+		if (scarpa != null) {
+
+			try {
+				Scarpa controlloEsistenza = scarpaDao.findByNome(scarpa.getNome());
+				if (controlloEsistenza == null) {
+					try {
+						scarpaDao.save(scarpa);
+						return new Risposta(200, "scarpa registrata correttamente");
+					} catch (Exception e) {
+						return new Risposta(400, "Errore nella registrazione della scarpa: " + e.getMessage());
+					}
+				} else {
+					return new Risposta(409, "la scarpa è già presente nel database");
 				}
-			} else {
-				return new Risposta(409, "la scarpa è già presente nel database");
+			} catch (Exception e) {
+				return new Risposta(400, "Errore in fase di controllo esistenza duplicato scarpa: " + e.getMessage());
 			}
-		} catch (Exception e) {
-			return new Risposta(400, "Errore in fase di controllo esistenza duplicato scarpa: " + e.getMessage());
 		}
+		return new Risposta(400, "non è stata inserito nessun oggetto scarpa nella richiesta");
 	}
 
 	@Override
@@ -81,17 +83,20 @@ public class ScarpaServiceImpl implements ScarpaService {
 	}
 
 	@Override
-	public Object getScarpaById(int id) {
-		try {
-			Scarpa scarpa = scarpaDao.findById(id).get();
-			ScarpaDto scarpaDto = modelMapper.map(scarpa, ScarpaDto.class);
-			scarpaDto.setCategoria(modelMapper.map(scarpa.getCategoria(), CategoriaDto.class).getDescrizione());
-			scarpaDto.setTaglie(scarpa.getTaglie().stream().map(Taglia::toString).collect(Collectors.toList()));
-			scarpaDto.setColori(scarpa.getColori().stream().map(t -> t.toString()).collect(Collectors.toList()));
-			return scarpaDto;
-		} catch (Exception e) {
-			return new Risposta(400, "errore in fase di richiesta scarpa per Id" + e.getMessage());
+	public Object getScarpaById(Integer id) {
+		if (id != null) {
+			try {
+				Scarpa scarpa = scarpaDao.findById(id).get();
+				ScarpaDto scarpaDto = modelMapper.map(scarpa, ScarpaDto.class);
+				scarpaDto.setCategoria(modelMapper.map(scarpa.getCategoria(), CategoriaDto.class).getDescrizione());
+				scarpaDto.setTaglie(scarpa.getTaglie().stream().map(Taglia::toString).collect(Collectors.toList()));
+				scarpaDto.setColori(scarpa.getColori().stream().map(t -> t.toString()).collect(Collectors.toList()));
+				return scarpaDto;
+			} catch (Exception e) {
+				return new Risposta(400, "errore in fase di richiesta scarpa per Id" + e.getMessage());
+			}
 		}
+		return new Risposta(400, "Errore in fase di richiesta, id non valido " + id);
 	}
 
 	@Override
@@ -119,7 +124,7 @@ public class ScarpaServiceImpl implements ScarpaService {
 	}
 
 	@Override
-	public Risposta cancellaScarpa(int id) {
+	public Risposta cancellaScarpa(Integer id) {
 		try {
 			Scarpa scarpa = scarpaDao.findById(id).get();
 			if (scarpa != null) {
@@ -132,14 +137,65 @@ public class ScarpaServiceImpl implements ScarpaService {
 			return new Risposta(400, "Errore in fase di cancellazione scarpa: " + e.getMessage());
 		}
 	}
-	
+
 	@Override
-	public Object getScarpaByIdForCart(int id) {
+	public Object getScarpaByIdForCart(Integer id) {
 		try {
 			Scarpa scarpa = scarpaDao.findById(id).get();
 			return scarpa;
 		} catch (Exception e) {
 			return new Risposta(400, "errore in fase di richiesta scarpa per Id" + e.getMessage());
 		}
+	}
+
+	@Override
+	public Object getScarpeByNuovoArrivo(boolean nuovoArrivo) {
+		if (nuovoArrivo == true) {
+			try {
+				List<Scarpa> scarpe = scarpaDao.findByNuovoArrivi(true);
+				List<ScarpaDto> scarpeDto = new ArrayList<>();
+				scarpe.forEach(s -> {
+					ScarpaDto scarpaDto = modelMapper.map(s, ScarpaDto.class);
+					scarpaDto.setCategoria(modelMapper.map(s.getCategoria(), CategoriaDto.class).getDescrizione());
+					scarpaDto.setTaglie(s.getTaglie().stream().map(Taglia::toString).collect(Collectors.toList()));
+					List<String> coloriDisponibili = s.getColori().stream().map(c -> c.toString())
+							.collect(Collectors.toList());
+					scarpaDto.setColori(coloriDisponibili);
+					scarpeDto.add(scarpaDto);
+				});
+				return scarpeDto;
+			} catch (Exception e) {
+				return new Risposta(400, "errore in fase di richiesta Nuove Scarpe" + e.getMessage());
+			}
+		}
+		return new Risposta(400, "Errore in fase di richiesta");
+	}
+
+	@Override
+	public Object getScarpeByCategoria(String categoria) {
+		if (categoria != null) {
+			try {
+				Categoria categoriaOggetto = categoriaDao.findByDescrizione(categoria);
+				try {
+					List<Scarpa> scarpe = scarpaDao.findByCategoria(categoriaOggetto);
+					List<ScarpaDto> scarpeDto = new ArrayList<>();
+					scarpe.forEach(s -> {
+						ScarpaDto scarpaDto = modelMapper.map(s, ScarpaDto.class);
+						scarpaDto.setCategoria(modelMapper.map(s.getCategoria(), CategoriaDto.class).getDescrizione());
+						scarpaDto.setTaglie(s.getTaglie().stream().map(Taglia::toString).collect(Collectors.toList()));
+						List<String> coloriDisponibili = s.getColori().stream().map(c -> c.toString())
+								.collect(Collectors.toList());
+						scarpaDto.setColori(coloriDisponibili);
+						scarpeDto.add(scarpaDto);
+					});
+					return scarpeDto;
+				} catch (Exception e) {
+					return new Risposta(400, "Errore in fase di ricerca scarpe con categoria " + categoriaOggetto);
+				}
+			} catch (Exception e) {
+				return new Risposta(400, "Errore in fase di ricerca categoria, non trovata");
+			}
+		}
+		return new Risposta(400, "Errore in fase di richiesta, categoria non presente " + categoria);
 	}
 }

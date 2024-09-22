@@ -3,6 +3,7 @@ package it.labair.dao;
 import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import it.labair.model.Scarpa;
+import it.labair.model.Categoria;
 import it.labair.model.Colore;
 
 
@@ -12,5 +13,8 @@ public interface ScarpaDao extends CrudRepository<Scarpa, Integer> {
 //	List<Scarpa> findByColore(@Param("u") Integer idColore);
 
 	List<Scarpa> findByColori(List<Colore> colori);
+	List<Scarpa> findByCategoria(Categoria categoria);
+	List<Scarpa> findByNuovoArrivi(Boolean nuovoArrivi);
+	Scarpa findByNome(String nome);
 	
 }

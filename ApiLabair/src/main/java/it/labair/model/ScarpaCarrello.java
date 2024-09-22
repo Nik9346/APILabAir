@@ -23,7 +23,7 @@ public class ScarpaCarrello {
 	@JoinColumn(name = "p_scarpa",referencedColumnName = "id")
 	private Scarpa scarpa;
 	
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne(cascade=CascadeType.REFRESH)
 	@JoinColumn(name = "p_carrello",referencedColumnName = "id")
 	private Carrello carrello;
 	

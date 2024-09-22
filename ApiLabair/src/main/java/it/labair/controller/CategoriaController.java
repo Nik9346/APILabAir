@@ -19,14 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/categorie")
 public class CategoriaController {
+	
 	@Autowired
 	private CategoriaService categoriaService;
 	
+	//endpoint utilizzato per ottenere l'elenco di tutte le categorie
 	@GetMapping("/get")
 	public ResponseEntity<Object> elencoCategorie(){
 		return ResponseEntity.status(HttpStatus.OK).body(categoriaService.getCategorie());
 	}
 	
+	//endpoint utilizzato per aggiungere una categoria al database
 	@PostMapping("/add")
 	public void registraCategoria(@Valid @RequestBody Categoria categoria) {
 		categoriaService.registraCategoria(categoria);

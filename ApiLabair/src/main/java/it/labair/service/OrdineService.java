@@ -7,5 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface OrdineService {
 	
 	Risposta addOrder(Ordine ordine, HttpServletRequest request);
+	Object getOrderByUtente(Integer IdUtente, HttpServletRequest request);
 
 }
