@@ -61,16 +61,21 @@ public class UtenteController {
 
 	//endpoint utilizzato per effettuare il login 
 	@PutMapping("/login")
-	public ResponseEntity<Risposta> loginUtente(@RequestBody Map<String, String> corpoRichiesta, HttpServletResponse response) {
-		UtenteDto utente = (UtenteDto) utenteService.utenteByUsername(corpoRichiesta.get("username"));
-		Risposta risposta = utenteService.loginUtente(corpoRichiesta.get("username"), corpoRichiesta.get("password"));
-		String sessionId = utente.getProfilo().getToken(); 
-		Cookie cookie = new Cookie("JSESSIONID", sessionId);
-		cookie.setHttpOnly(true);
-		cookie.setPath("/");
-		cookie.setMaxAge(60*60);
-		response.addCookie(cookie);
-		return ResponseEntity.status(risposta.getCodice()).body(risposta);
+	public ResponseEntity<Object> loginUtente(@RequestBody Map<String, String> corpoRichiesta, HttpServletResponse response) {
+		Object oggetto = utenteService.utenteByUsername(corpoRichiesta.get("username"));
+		if(oggetto instanceof Risposta) {
+			Risposta risposta = (Risposta) oggetto;
+			return ResponseEntity.status(risposta.getCodice()).body(risposta);
+		}
+			UtenteDto utenteDto = (UtenteDto) oggetto;
+			Risposta risposta = utenteService.loginUtente(corpoRichiesta.get("username"), corpoRichiesta.get("password"));
+			String sessionId = utenteDto.getProfilo().getToken(); 
+			Cookie cookie = new Cookie("JSESSIONID", sessionId);
+			cookie.setHttpOnly(true);
+			cookie.setPath("/");
+			cookie.setMaxAge(60*60);
+			response.addCookie(cookie);
+			return ResponseEntity.status(risposta.getCodice()).body(risposta);
 	}
 
 	//enpoint utilizzato per la registrazione dell'utente
