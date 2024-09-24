@@ -15,8 +15,10 @@ public class ControlloCookie {
 				if("JSESSIONID".equals(cookie.getName())) {
 					return cookie.getValue();
 				}
+				return "Errore i dati registrati non sono validi";
 			}
 		}
-		return null;
+		return "Errore, non sono presenti cookie in richiesta";
 	}
+
 }

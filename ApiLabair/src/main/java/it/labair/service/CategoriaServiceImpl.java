@@ -19,6 +19,8 @@ public class CategoriaServiceImpl implements CategoriaService {
 	@Autowired
 	private ModelMapper modelMapper;
 
+	
+	//Funzione utilizzata per la registrazione di una nuova categoria
 	@Override
 	public Risposta registraCategoria(Categoria categoria) {
 		if (categoria == null) {
@@ -31,7 +33,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 			return new Risposta(400, "Errore in fase di registrazione della categoria: " + e.getMessage());
 		}
 	}
-
+	//Funzione utilizzata per ottenere la lista di tutte le categorie mappate in classe CategoriaDto
 	@Override
 	public Object getCategorie() {
 		try {
@@ -48,7 +50,8 @@ public class CategoriaServiceImpl implements CategoriaService {
 			return new Risposta(400, "errore in fase di richiesta elenco categorie: " + e.getMessage());
 		}
 	}
-
+	
+	//Funzione utilizzata per ottenere una specifica categoria passando l'id
 	@Override
 	public Object getCategoriaById(int id) {
 		try {
@@ -61,7 +64,8 @@ public class CategoriaServiceImpl implements CategoriaService {
 			return new Risposta(400, "Errore in fase di richiesta Categoria tramite Id: " + e.getMessage());
 		}
 	}
-
+	
+	//Funzione utilizzata per ottenere una specifica categoria passando il nome della categoria
 	@Override
 	public Object getCategoriaByDescrizione(String descrizione) {
 		try {
@@ -76,6 +80,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 		}
 	}
 
+	//Funzione utilizzata per cancellare una categoria passando il suo id
 	@Override
 	public Risposta cancellaCategoria(int id) {
 		Categoria categoria = categoriaDao.findById(id).get();

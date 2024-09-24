@@ -20,6 +20,7 @@ public class ColoreServiceImpl implements ColoreService {
 	@Autowired
 	ModelMapper mapper;
 
+	//Funzione utilizzata per registrare un nuovo colore
 	@Override
 	public Risposta registraColore(Colore colore) {
 		if (colore != null) {
@@ -33,7 +34,7 @@ public class ColoreServiceImpl implements ColoreService {
 			return new Risposta(400, "non è presente nessun colore da registrare nella richiesta");
 		}
 	}
-
+	//Funzione utilizzata per cancellare un colore passando l'id
 	@Override
 	public Risposta cancellaColore(int id) {
 		try {
@@ -48,7 +49,7 @@ public class ColoreServiceImpl implements ColoreService {
 			return new Risposta(400, "Errore in fase di cancellazione colore: " + e.getMessage());
 		}
 	}
-
+	//Funzione utilizzata per ottenere un colore passando il nome del colore in richiesta
 	@Override
 	public Object getColoreByNomeColore(String nomeColore) {
 		try {
@@ -65,7 +66,7 @@ public class ColoreServiceImpl implements ColoreService {
 			return new Risposta(400, "Errore in fase di richiesta colore tramite Nome Colore " + e.getMessage());
 		}
 	}
-
+	//Funzione utilizzata per la registrazione di più colori passando un array di colori in richiesta
 	@Override
 	public Risposta registraColori(List<Colore> colori) {
 		List<Colore> coloriNuovi = new ArrayList<>();
@@ -93,7 +94,8 @@ public class ColoreServiceImpl implements ColoreService {
 			return new Risposta(400, e.getMessage());
 		}
 	}
-
+	
+	//Funzione utilizzata per ottenere l'intero elenco dei colori presenti nel db mappati in dto
 	@Override
 	public Object elencocolori() {
 		try {
@@ -111,7 +113,7 @@ public class ColoreServiceImpl implements ColoreService {
 		}
 
 	}
-
+	//Funzione utilizzata per ottenere un colore specifico passando il suo id
 	@Override
 	public Object getColoreById(Integer idColore) {
 		if(idColore!= null ) {

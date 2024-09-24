@@ -38,6 +38,7 @@ public class OrdineServiceImpl implements OrdineService {
 	@Autowired
 	ModelMapper mapper;
 
+	//Funzione utilizzata per aggiungere un ordine verificando che il token in richiesta sia valido
 	@Override
 	public Risposta addOrder(Ordine ordine, HttpServletRequest request) {
 		if (ordine != null && request != null) {
@@ -47,6 +48,7 @@ public class OrdineServiceImpl implements OrdineService {
 				Carrello carrelloUtente = utente.getCarrello();
 				if (utente != null && carrelloUtente != null) {
 					try {
+						Double importoOrdine = 0.0;
 						ordine.setUtente(utente);
 						ordine.setData(LocalDate.now());
 						ordine.getPagamento().setDataPagamento(LocalDate.now());
@@ -55,14 +57,18 @@ public class OrdineServiceImpl implements OrdineService {
 						List<ScarpaCarrello> scarpeDaRimuovere = new ArrayList<>();
 						for (ScarpaCarrello scarpaCarrello : scarpeNelCarrello) {
 							scarpeDaRimuovere.add(scarpaCarrello);
+							importoOrdine += (scarpaCarrello.getQuantita() * scarpaCarrello.getScarpa().getPrezzo()) + ordine.getSpeseSpedizione();
 						}
-						scarpeDaRimuovere.forEach(s -> {
-							scarpaOrdinataService.aggiuntaScarpaOrdinata(s, ordine);
-							scarpaCarrelloService.rimozioneScarpa(s.getId(), request);
-						});
-						ordineDao.save(ordine);
+						if((ordine.getImporto()) == importoOrdine) {
+							scarpeDaRimuovere.forEach(s -> {
+								scarpaOrdinataService.aggiuntaScarpaOrdinata(s, ordine);
+								scarpaCarrelloService.rimozioneScarpa(s.getId(), request);
+							});
+							ordineDao.save(ordine);							
+							return new Risposta(200, "ordine concluso con successo");
+						}
+						return new Risposta(400, "Errore, l'importo dell'ordine non corrisponde");
 
-						return new Risposta(200, "ordine concluso con successo");
 					} catch (Exception e) {
 						return new Risposta(400, "errore in fase di registrazione ordine " + e.getMessage());
 					}
@@ -74,6 +80,7 @@ public class OrdineServiceImpl implements OrdineService {
 		return new Risposta(400, "Errore in fase di richiesta, ordine o token non validi");
 	}
 
+	//Funzione utilizzata per ottenere l'elenco di tutti gli ordini per uno specifico utente verificando che il token sia valido
 	@Override
 	public Object getOrderByUtente(Integer IdUtente, HttpServletRequest request) {
 		if (IdUtente != null && request != null) {

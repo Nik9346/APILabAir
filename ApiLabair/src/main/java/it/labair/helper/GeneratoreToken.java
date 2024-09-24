@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class GeneratoreToken {
 
+	//Funzione utilizzata per la generazione di un token partendo dall'username dell'utente
 	public String generazioneToken(String userName) {
+		
 		LocalDateTime now = LocalDateTime.now();
 		Instant instant = now.toInstant(OffsetDateTime.now().getOffset());
 		long timestamp = instant.getEpochSecond()*1000;

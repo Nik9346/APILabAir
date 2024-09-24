@@ -27,6 +27,7 @@ public class IndirizzoServiceImpl implements IndirizzoService {
 	@Autowired
 	ControlloCookie controlloCookie;
 
+	//Funzione utilizzata per la registrazione di un nuovo indirizzo, verificando che l'utente sia loggato e il token sia valido
 	@Override
 	public Risposta registraIndirizzo(Indirizzo indirizzo, HttpServletRequest request) {
 		if(indirizzo != null && request !=null) {
@@ -47,13 +48,14 @@ public class IndirizzoServiceImpl implements IndirizzoService {
 		}
 		return new Risposta(400, "Errore in fase di richiesta, indirizzo o utente non trovato");
 	}
-
+	
 	@Override
 	public Object elencoIndirizzi() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	//Funzione utilizzata per la cancellazione di un indirizzo passando l'indirizzo completo
 	@Override
 	public Risposta cancellaIndirizzo(Indirizzo indirizzo, HttpServletRequest request) {
 		String token = controlloCookie.getSessionId(request);
@@ -79,6 +81,7 @@ public class IndirizzoServiceImpl implements IndirizzoService {
 		return new Risposta(400, "Non autorizzato, token errato");
 	}
 
+	//Funzione utilizzata per la modifica dell'indirizzo utente passando un indirizzo nuovo e verificando che il token sia valido
 	@Override
 	public Risposta modificaIndirizzo(Indirizzo indirizzo, HttpServletRequest request) {
 		String token = controlloCookie.getSessionId(request);
@@ -104,6 +107,7 @@ public class IndirizzoServiceImpl implements IndirizzoService {
 		return new Risposta(400, "Non autorizzato, token errato");
 	}
 
+	//Funzione utilizzata per ottenere tutti gli indirizzi relativi all'utente verificando che nella richiesta ci sia un token valido
 	@Override
 	public Object getIndirizziByUtente(Utente utente, HttpServletRequest request) {
 		if (utente != null && request != null) {

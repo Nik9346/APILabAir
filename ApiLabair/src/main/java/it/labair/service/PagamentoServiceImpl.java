@@ -21,7 +21,11 @@ public class PagamentoServiceImpl implements PagamentoService {
 	
 	@Autowired
 	UtenteService utenteService;
-
+	
+	//toDo: Aggiungere controllo sui dati della carta di credito, scadenza, cvv, numero carta
+	
+	
+	//Funzione utilizzata per registrare un pagamento verificando la validità del token
 	@Override
 	public Risposta addPagamento(Pagamento pagamento, HttpServletRequest request) {
 		

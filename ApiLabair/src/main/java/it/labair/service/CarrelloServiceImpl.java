@@ -28,6 +28,8 @@ public class CarrelloServiceImpl implements CarrelloService {
 	@Autowired
 	ControlloCookie controlloCookie;
 	
+	
+	//Funzione utilizzata per ottenere il carrello relativo all'idUtente passato, verificando la validità del token
 	@Override
 	public Object getCarrello(Integer idUtente, HttpServletRequest request) {
 		if(idUtente != null && request != null) {
@@ -49,6 +51,7 @@ public class CarrelloServiceImpl implements CarrelloService {
 		return new Risposta(400, "Errore in fase di richiesta, idUtente o token non validi");
 	}
 
+	//Funzione utilizzata per la creazione del carrello per il relativo utente
 	@Override
 	public Object createCarrello(Utente utente, Carrello carrello) {
 		if (utente != null) {
@@ -66,6 +69,7 @@ public class CarrelloServiceImpl implements CarrelloService {
 
 	}
 
+	//Funzione utilizzata per cancellare un determinato carrello
 	@Override
 	public Risposta deleteCarrello(Carrello carrello) {
 		if (carrello != null) {
@@ -80,6 +84,7 @@ public class CarrelloServiceImpl implements CarrelloService {
 		return new Risposta(400, "non è presente nessun oggetto carrello in richiesta");
 	}
 
+	//Funzione utilizzata per aggiornare il carrello
 	@Override
 	public Risposta updateCarrello(Carrello carrello) {
 		Optional<Carrello> carrelloEsistente = carrelloDao.findById(carrello.getId());
@@ -96,7 +101,8 @@ public class CarrelloServiceImpl implements CarrelloService {
 		}
 		return new Risposta(400, "carrello non trovato");
 	}
-
+	
+	//Funzione utilizzata per calcolare l'importo totale del carrello
 	@Override
 	public Double calcoloImporto(Carrello carrello) {
 		Double importoCarrello = 0.0;
@@ -109,6 +115,7 @@ public class CarrelloServiceImpl implements CarrelloService {
 		return importoCarrello;
 	}
 
+	//Funzione utilizzata per svuotare il carrello
 	@Override
 	public Risposta clearCart(Carrello carrello) {
 		if(!carrello.getCarrelloItem().isEmpty()) {
@@ -124,6 +131,7 @@ public class CarrelloServiceImpl implements CarrelloService {
 		return new Risposta(400, "Errore, carrello non trovato");
 	}
 	
+	//Funzione utilizzata per verificare l'integrità dei dati del carrello in fase di richiesta ordine
 	public Object getCarrelloForVerify(Integer idUtente, HttpServletRequest request) {
 		if(idUtente != null && request != null) {
 			String token = controlloCookie.getSessionId(request);
